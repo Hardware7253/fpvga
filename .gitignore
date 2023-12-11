@@ -1,0 +1,8 @@
+*.json
+*.vcd
+*.o
+*.fs
+*.lock
+
+image_converter/target/
+
