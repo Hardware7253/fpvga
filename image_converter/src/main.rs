@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     let file_name = binding.trim();
     let output_path = "image.hex"; // Output file path
 
-    let channel_colour_combinations: u8 = 3; // Numbers of colours each rgb channel can hold, default is 255
+    let max_value: u8 = 3; // Max value a color chanell can represent E.g. 3 for a 2 bit colour chanel, 255 for an 8 bit colour chanel
 
     // Open image and resize;
     let img = ImageReader::open(file_name)?.decode()?;
@@ -31,12 +31,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>>{
     for hex in [false, true] {
         for (x, y, pixel) in clamped_image.enumerate_pixels_mut() {
             if let Some(original_pixel) = resized_image.get_pixel_checked(x, y) {
-                *pixel = clamp_colour(*original_pixel, channel_colour_combinations, hex);
+                *pixel = clamp_colour(*original_pixel, max_value, hex);
             }
         }
 
         if hex {
-            let _ = image_hex_dump(&clamped_image, channel_colour_combinations, output_path);
+            let _ = image_hex_dump(&clamped_image, max_value, output_path);
         } else {
             let _ = clamped_image.save("preview.png");
         }
@@ -120,7 +120,7 @@ fn image_hex_dump(
 
     // Based on the channel colour combinations figure out the width of each channels bus
     // 3 Colour combinations would have a 2 bit bus, becase 3 is the maximum number you can represent with 2 bits
-    let bus_bits = (channel_colour_combinations + 1) as f32;
+    let bus_bits = channel_colour_combinations as f32 + 1.0;
     let bus_bits = bus_bits.ln() / 2.0_f32.ln();
     let bus_bits = bus_bits as u8;
 

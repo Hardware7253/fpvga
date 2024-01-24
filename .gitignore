@@ -3,6 +3,7 @@
 *.o
 *.fs
 *.lock
+*.vscode
 
 image_converter/target/
 
